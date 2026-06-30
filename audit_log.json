@@ -52,5 +52,61 @@
     "confidence": 0.5,
     "signal_1_score": 0.1,
     "status": "classified"
+  },
+  {
+    "content_id": "3562f1c7-e81d-4b9a-aaed-df2aeb2fb7b3",
+    "creator_id": "user-1_Clearly_AI",
+    "timestamp": "2026-06-30T02:40:25.087576Z",
+    "attribution": "likely_ai",
+    "confidence": 0.43,
+    "signals": {
+      "vocabulary_variety": 0.88,
+      "sentence_variance": 0.36,
+      "structural_fluidity": 0.0,
+      "linguistic_flaws": 0.4
+    },
+    "status": "classified"
+  },
+  {
+    "content_id": "cc5d6bbf-ae64-4003-bfe5-1b6a3c31e511",
+    "creator_id": "user-2_Clearly_Human",
+    "timestamp": "2026-06-30T02:40:25.091759Z",
+    "attribution": "likely_human",
+    "confidence": 0.83,
+    "signals": {
+      "vocabulary_variety": 0.87,
+      "sentence_variance": 0.45,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 1.0
+    },
+    "status": "classified"
+  },
+  {
+    "content_id": "b94a3ec0-d6f5-4a6d-af36-0bb6d036f15f",
+    "creator_id": "user-3_Formal_Human_Borderline",
+    "timestamp": "2026-06-30T02:40:25.094427Z",
+    "attribution": "uncertain",
+    "confidence": 0.63,
+    "signals": {
+      "vocabulary_variety": 0.86,
+      "sentence_variance": 0.37,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 0.4
+    },
+    "status": "classified"
+  },
+  {
+    "content_id": "b20d484b-43a3-43a3-ac4c-9dc98b9c90ab",
+    "creator_id": "user-4_Edited_AI_Borderline",
+    "timestamp": "2026-06-30T02:40:25.097070Z",
+    "attribution": "uncertain",
+    "confidence": 0.63,
+    "signals": {
+      "vocabulary_variety": 0.92,
+      "sentence_variance": 0.33,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 0.4
+    },
+    "status": "classified"
   }
 ]
