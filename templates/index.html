@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Provenance Guard - Attribution & Transparency Dashboard</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+    :root {
+      --bg-page: #FAF7F2;
+      --text-primary: #4A3F35;
+      --text-secondary: #7A6C5E;
+      --text-muted: #A39688;
+      --color-terracotta: #C97A64;
+      --color-terracotta-hover: #B56651;
+      --color-terracotta-light: #F7EAE6;
+      --border-sand: #EAE2D8;
+      --border-clay: #DCD4C4;
+      --card-bg: #FFFFFF;
+      --card-shadow: 0 12px 32px rgba(74, 63, 53, 0.04);
+      --card-shadow-hover: 0 20px 48px rgba(74, 63, 53, 0.08);
+      --radius-pillowy: 20px;
+      --radius-input: 12px;
+
+      /* Verdict Status Colors (desaturated, organic tones) */
+      --verdict-human-bg: #E6ECE5;
+      --verdict-human-border: #D2DFD0;
+      --verdict-human-text: #485947;
+
+      --verdict-uncertain-bg: #F6EFEB;
+      --verdict-uncertain-border: #EAE2D8;
+      --verdict-uncertain-text: #6E5642;
+
+      --verdict-ai-bg: #F7EAE6;
+      --verdict-ai-border: #EDDDD9;
+      --verdict-ai-text: #804944;
+
+      --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 1.5rem;
+    }
+
+    /* Header & Navigation */
+    header {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto 2.5rem auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .brand-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-sand);
+      padding-bottom: 1rem;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .logo-badge {
+      background: var(--color-terracotta-light);
+      border: 1px solid var(--color-terracotta);
+      color: var(--color-terracotta);
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(201, 122, 100, 0.1);
+    }
+
+    .logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .nav-tab-btn {
+      background: none;
+      border: 1px solid transparent;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 0.6rem 1.2rem;
+      cursor: pointer;
+      border-radius: 30px;
+      transition: var(--transition-smooth);
+    }
+
+    .nav-tab-btn:hover {
+      background-color: rgba(201, 122, 100, 0.05);
+      color: var(--color-terracotta);
+    }
+
+    .nav-tab-btn.active {
+      background-color: var(--card-bg);
+      border-color: var(--border-sand);
+      color: var(--text-primary);
+      box-shadow: 0 4px 12px rgba(74, 63, 53, 0.03);
+    }
+
+    /* Main Workspace Containers */
+    main {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      flex-grow: 1;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Two-Column Grid for Submission workspace */
+    .submit-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .submit-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .ceramic-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(220, 212, 196, 0.3);
+      border-radius: var(--radius-pillowy);
+      box-shadow: var(--card-shadow);
+      padding: 2rem;
+      transition: var(--transition-smooth);
+    }
+
+    .ceramic-card:hover {
+      box-shadow: var(--card-shadow-hover);
+    }
+
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      border-left: 3px solid var(--color-terracotta);
+      padding-left: 0.75rem;
+    }
+
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-input {
+      width: 100%;
+      font-family: inherit;
+      font-size: 1rem;
+      color: var(--text-primary);
+      background-color: var(--bg-page);
+      border: 1px solid var(--border-sand);
+      border-radius: var(--radius-input);
+      padding: 0.75rem 1rem;
+      transition: var(--transition-smooth);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--color-terracotta);
+      box-shadow: 0 0 0 3px rgba(201, 122, 100, 0.15);
+    }
+
+    textarea.form-input {
+      resize: vertical;
+      min-height: 220px;
+    }
+
+    .editor-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Button Styles */
+    .btn-terracotta {
+      background-color: var(--color-terracotta);
+      color: #FFFFFF;
+      border: none;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.9rem 1.5rem;
+      border-radius: var(--radius-input);
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 12px rgba(201, 122, 100, 0.2);
+      transition: var(--transition-smooth);
+    }
+
+    .btn-terracotta:hover:not(:disabled) {
+      background-color: var(--color-terracotta-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(201, 122, 100, 0.3);
+    }
+
+    .btn-terracotta:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn-terracotta:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Results Workspace (Right Column) */
+    .results-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+      text-align: center;
+      color: var(--text-muted);
+      border: 2px dashed var(--border-sand);
+      border-radius: var(--radius-pillowy);
+      padding: 2rem;
+    }
+
+    .placeholder-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+
+    .results-active {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Verdict Banner */
+    .verdict-banner {
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      border-left: 5px solid transparent;
+      animation: bannerSlide 0.4s ease-out forwards;
+    }
+
+    @keyframes bannerSlide {
+      from { transform: scale(0.96); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .verdict-banner.human {
+      background-color: var(--verdict-human-bg);
+      border-color: var(--verdict-human-border);
+      color: var(--verdict-human-text);
+      border-left-color: #728A70;
+    }
+
+    .verdict-banner.uncertain {
+      background-color: var(--verdict-uncertain-bg);
+      border-color: var(--verdict-uncertain-border);
+      color: var(--verdict-uncertain-text);
+      border-left-color: #C09A75;
+    }
+
+    .verdict-banner.ai {
+      background-color: var(--verdict-ai-bg);
+      border-color: var(--verdict-ai-border);
+      color: var(--verdict-ai-text);
+      border-left-color: #BD6F67;
+    }
+
+    .verdict-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    .verdict-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .verdict-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .verdict-desc {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    /* Gauges Dashboard Row */
+    .gauges-row {
+      display: flex;
+      justify-content: space-around;
+      gap: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    .gauge-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      position: relative;
+    }
+
+    .gauge-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+    }
+
+    .circular-gauge {
+      width: 120px;
+      height: 120px;
+      transform: rotate(-90deg);
+    }
+
+    .circular-bg {
+      fill: none;
+      stroke: var(--border-sand);
+      stroke-width: 10;
+    }
+
+    .circular-fill {
+      fill: none;
+      stroke-width: 10;
+      stroke-linecap: round;
+      transition: stroke-dasharray 0.8s ease-in-out;
+    }
+
+    .circular-fill.human {
+      stroke: #8E9A86;
+    }
+
+    .circular-fill.ai {
+      stroke: #C97A64;
+    }
+
+    .gauge-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -60%);
+      text-align: center;
+    }
+
+    .gauge-percentage {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+
+    .gauge-subtext {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: -4px;
+    }
+
+    /* Heuristics breakdown progress bars */
+    .heuristics-section {
+      border-top: 1px solid var(--border-sand);
+      padding-top: 1.5rem;
+    }
+
+    .heuristics-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .heuristic-item {
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .heuristic-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .heuristic-name {
+      font-weight: 600;
+      cursor: help;
+      border-bottom: 1px dashed var(--text-muted);
+    }
+
+    .heuristic-value {
+      font-weight: 700;
+    }
+
+    .heuristic-bar-bg {
+      width: 100%;
+      height: 8px;
+      background-color: var(--bg-page);
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid rgba(220, 212, 196, 0.3);
+    }
+
+    .heuristic-bar-fill {
+      height: 100%;
+      background-color: #A69C8E;
+      border-radius: 4px;
+      width: 0;
+      transition: width 0.8s cubic-bezier(0.1, 0.8, 0.25, 1);
+    }
+
+    .heuristic-bar-fill.human-favored {
+      background-color: #8E9A86;
+    }
+
+    /* Appeal Form Card (Sub-slide) */
+    .appeal-card {
+      background-color: var(--bg-page);
+      border: 1px solid var(--border-sand);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      animation: slideUp 0.3s ease-out forwards;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(15px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .appeal-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .appeal-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    /* Admin Dashboard Tab layout */
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stats-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(220, 212, 196, 0.3);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--card-shadow);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .stats-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .stats-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* Data Table / Admin Queue list */
+    .table-container {
+      background: var(--card-bg);
+      border: 1px solid rgba(220, 212, 196, 0.3);
+      border-radius: var(--radius-pillowy);
+      box-shadow: var(--card-shadow);
+      padding: 2rem;
+      overflow-x: auto;
+    }
+
+    .table-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-sand);
+      font-size: 0.9rem;
+    }
+
+    th {
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    tr.highlight-appeal {
+      background-color: rgba(246, 239, 235, 0.4);
+    }
+
+    .status-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .status-badge.completed {
+      background-color: #E2E8DD;
+      color: #3F4E3F;
+    }
+
+    .status-badge.under_review {
+      background-color: #F8EEE0;
+      color: #6D4E3A;
+      border: 1px solid #E8D8C8;
+    }
+
+    .status-badge.resolved_human {
+      background-color: #D2E4D5;
+      color: #2F3E2F;
+    }
+
+    .status-badge.resolved_maintained {
+      background-color: #EAE2D8;
+      color: #4A3F35;
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-admin {
+      border: 1px solid var(--border-clay);
+      background: var(--card-bg);
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: var(--transition-smooth);
+    }
+
+    .btn-admin.approve {
+      background-color: rgba(142, 154, 134, 0.1);
+      color: #485947;
+      border-color: #D2DFD0;
+    }
+
+    .btn-admin.approve:hover {
+      background-color: rgba(142, 154, 134, 0.2);
+    }
+
+    .btn-admin.maintain {
+      background-color: rgba(201, 122, 100, 0.05);
+      color: var(--color-terracotta);
+      border-color: var(--border-sand);
+    }
+
+    .btn-admin.maintain:hover {
+      background-color: rgba(201, 122, 100, 0.15);
+    }
+
+    .reasoning-text {
+      background: var(--card-bg);
+      border: 1px solid var(--border-sand);
+      border-radius: 6px;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      font-style: italic;
+      color: var(--text-secondary);
+      max-width: 320px;
+      word-wrap: break-word;
+    }
+
+    /* Toasts System */
+    .toast-container {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      z-index: 1000;
+    }
+
+    .toast {
+      background: var(--text-primary);
+      color: #FFFFFF;
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius-input);
+      box-shadow: 0 10px 24px rgba(74, 63, 53, 0.2);
+      font-size: 0.9rem;
+      font-weight: 600;
+      min-width: 250px;
+      max-width: 350px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      animation: toastSlide 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes toastSlide {
+      from { transform: translateX(100px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .toast.error {
+      background-color: #8A4F48;
+      border-left: 4px solid #F2D8D5;
+    }
+
+    .toast.success {
+      background-color: #485947;
+      border-left: 4px solid #E2E8DD;
+    }
+
+    .toast-close {
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      opacity: 0.8;
+      font-weight: 700;
+    }
+
+    /* Loading Spinner */
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 3px solid #FFFFFF;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Tooltip styling */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+
+    /* Footer text */
+    footer {
+      max-width: 1200px;
+      width: 100%;
+      margin: 2rem auto 0 auto;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-sand);
+      padding-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand-section">
+      <a href="#" class="logo-container">
+        <div class="logo-badge">P.G.</div>
+        <div class="logo-text">Provenance Guard</div>
+      </a>
+      <nav class="nav-tabs" aria-label="Main Navigation">
+        <button class="nav-tab-btn active" id="tab-submit-btn" onclick="switchTab('submit')">Verify Content</button>
+        <button class="nav-tab-btn" id="tab-admin-btn" onclick="switchTab('admin')">Admin Queue</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Area -->
+  <main>
+    <!-- Submit Content Workspace Tab -->
+    <div id="tab-submit" class="tab-content active">
+      <div class="submit-grid">
+        
+        <!-- Left Side: Content Submission Card -->
+        <div class="ceramic-card">
+          <h2 class="card-title">Text Analysis Editor</h2>
+          <form id="submission-form" onsubmit="submitText(event)">
+            
+            <div class="form-group">
+              <label for="creator-id" class="form-label">Creator Identifier</label>
+              <input type="text" id="creator-id" class="form-input" placeholder="e.g., artist_celeste" required autocomplete="username">
+            </div>
+
+            <div class="form-group">
+              <label for="content-text" class="form-label">Text Content to Analyze</label>
+              <textarea id="content-text" class="form-input" placeholder="Paste your prose, story draft, or poem here..." required oninput="updateCounters()"></textarea>
+            </div>
+
+            <div class="editor-footer">
+              <span id="char-counter">0 characters</span>
+              <span id="word-counter">0 words</span>
+            </div>
+
+            <button type="submit" class="btn-terracotta" id="submit-btn">
+              <span id="btn-text">Analyze Content</span>
+              <div id="btn-spinner" class="spinner" style="display: none;"></div>
+            </button>
+
+          </form>
+        </div>
+
+        <!-- Right Side: Analysis Results Card -->
+        <div class="ceramic-card" id="results-card">
+          <div class="results-placeholder" id="results-placeholder">
+            <div class="placeholder-icon">👁️</div>
+            <h3>Waiting for content</h3>
+            <p>Input your text in the editor and click "Analyze Content" to run the multi-signal detection pipeline.</p>
+          </div>
+
+          <div class="results-active" id="results-active" style="display: none;">
+            <h2 class="card-title">Verification Results</h2>
+            
+            <!-- Verdict Banner -->
+            <div class="verdict-banner" id="verdict-banner">
+              <span class="verdict-icon" id="verdict-icon">✓</span>
+              <div class="verdict-details">
+                <span class="verdict-title" id="verdict-title">Verified Human Work</span>
+                <span class="verdict-desc" id="verdict-desc">This content displays organic stylistic variations.</span>
+              </div>
+            </div>
+
+            <!-- Dynamic circular gauges -->
+            <div class="gauges-row">
+              <!-- Human attribution score -->
+              <div class="gauge-wrapper">
+                <span class="gauge-label">Human Score</span>
+                <svg class="circular-gauge">
+                  <circle class="circular-bg" cx="60" cy="60" r="50"></circle>
+                  <circle class="circular-fill human" id="human-fill" cx="60" cy="60" r="50" stroke-dasharray="314.16" stroke-dashoffset="314.16"></circle>
+                </svg>
+                <div class="gauge-text">
+                  <span class="gauge-percentage" id="human-percentage">0%</span>
+                  <div class="gauge-subtext">Verified</div>
+                </div>
+              </div>
+
+              <!-- AI involvement probability -->
+              <div class="gauge-wrapper">
+                <span class="gauge-label">AI Probability</span>
+                <svg class="circular-gauge">
+                  <circle class="circular-bg" cx="60" cy="60" r="50"></circle>
+                  <circle class="circular-fill ai" id="ai-fill" cx="60" cy="60" r="50" stroke-dasharray="314.16" stroke-dashoffset="314.16"></circle>
+                </svg>
+                <div class="gauge-text">
+                  <span class="gauge-percentage" id="ai-percentage">0%</span>
+                  <div class="gauge-subtext">Estimated</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Individual Signals Progress Bars -->
+            <div class="heuristics-section">
+              <h3 class="heuristics-title">Multi-Signal Diagnostics</h3>
+              
+              <!-- Signal 1: Vocabulary Variety -->
+              <div class="heuristic-item">
+                <div class="heuristic-info">
+                  <span class="heuristic-name" title="The ratio of unique words to total words. Higher signals diverse, organic lexical choices.">Vocabulary Variety</span>
+                  <span class="heuristic-value" id="sig-vocab-val">0%</span>
+                </div>
+                <div class="heuristic-bar-bg">
+                  <div class="heuristic-bar-fill human-favored" id="sig-vocab-bar"></div>
+                </div>
+              </div>
+
+              <!-- Signal 2: Sentence Length Variance -->
+              <div class="heuristic-item">
+                <div class="heuristic-info">
+                  <span class="heuristic-name" title="Standard deviation of sentence lengths. Dynamic variability is a hallmark of human authors.">Sentence Variance</span>
+                  <span class="heuristic-value" id="sig-sentence-val">0%</span>
+                </div>
+                <div class="heuristic-bar-bg">
+                  <div class="heuristic-bar-fill human-favored" id="sig-sentence-bar"></div>
+                </div>
+              </div>
+
+              <!-- Signal 3: Structural Fluidity -->
+              <div class="heuristic-item">
+                <div class="heuristic-info">
+                  <span class="heuristic-name" title="Density of repetitive transition words like 'Moreover', 'Additionally', etc. Lower density yields a higher human score.">Structural Fluidity</span>
+                  <span class="heuristic-value" id="sig-fluidity-val">0%</span>
+                </div>
+                <div class="heuristic-bar-bg">
+                  <div class="heuristic-bar-fill human-favored" id="sig-fluidity-bar"></div>
+                </div>
+              </div>
+
+              <!-- Signal 4: Linguistic Flaws & Slang -->
+              <div class="heuristic-item">
+                <div class="heuristic-info">
+                  <span class="heuristic-name" title="Frequency of informal contractions or slang. AI models rarely generate minor imperfections natively.">Linguistic Flaws & Slang</span>
+                  <span class="heuristic-value" id="sig-flaws-val">0%</span>
+                </div>
+                <div class="heuristic-bar-bg">
+                  <div class="heuristic-bar-fill human-favored" id="sig-flaws-bar"></div>
+                </div>
+              </div>
+
+              <!-- Signal 5: Trailing Participles -->
+              <div class="heuristic-item">
+                <div class="heuristic-info">
+                  <span class="heuristic-name" title="Measures sentence endings wrapping in present participles (e.g. ', showing'). Human authors display more natural variation.">Trailing Participles</span>
+                  <span class="heuristic-value" id="sig-participles-val">0%</span>
+                </div>
+                <div class="heuristic-bar-bg">
+                  <div class="heuristic-bar-fill human-favored" id="sig-participles-bar"></div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Creator Appeal Panel (Triggered for Uncertain / Likely AI) -->
+            <div class="appeal-card" id="appeal-panel" style="display: none;">
+              <h3 class="appeal-title">Contest Classification</h3>
+              <p class="appeal-subtitle">If this is your original work and you believe the classification was in error, submit an appeal explaining your writing context.</p>
+              <form id="appeal-form" onsubmit="submitAppeal(event)">
+                <input type="hidden" id="appeal-content-id">
+                <div class="form-group">
+                  <label for="appeal-reason" class="form-label">Reasoning / Proof of human origin</label>
+                  <textarea id="appeal-reason" class="form-input" style="min-height: 90px;" placeholder="e.g., I am a non-native English speaker, and this is a translation from my personal journal..." required></textarea>
+                </div>
+                <button type="submit" class="btn-terracotta" id="appeal-btn" style="padding: 0.6rem 1rem; font-size: 0.9rem;">
+                  <span>Submit Appeal</span>
+                </button>
+              </form>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Admin Dashboard Tab -->
+    <div id="tab-admin" class="tab-content">
+      <!-- Real-Time Metrics Row -->
+      <div class="analytics-grid">
+        <div class="stats-card">
+          <span class="stats-title">Total Submissions</span>
+          <span class="stats-value" id="stat-total">0</span>
+        </div>
+        <div class="stats-card">
+          <span class="stats-title">Likely AI Ratio</span>
+          <span class="stats-value" id="stat-ai-pct">0%</span>
+        </div>
+        <div class="stats-card">
+          <span class="stats-title">Likely Human Ratio</span>
+          <span class="stats-value" id="stat-human-pct">0%</span>
+        </div>
+        <div class="stats-card">
+          <span class="stats-title">Uncertain Ratio</span>
+          <span class="stats-value" id="stat-uncertain-pct">0%</span>
+        </div>
+        <div class="stats-card">
+          <span class="stats-title">Appeal Rate</span>
+          <span class="stats-value" id="stat-appeal-rate">0%</span>
+        </div>
+        <div class="stats-card">
+          <span class="stats-title">Avg Confidence</span>
+          <span class="stats-value" id="stat-avg-score">0.0</span>
+        </div>
+      </div>
+
+      <!-- Audit Queue Table -->
+      <div class="table-container">
+        <div class="table-header-row">
+          <h2 class="card-title" style="margin-bottom: 0;">Attribution Audit Log</h2>
+          <button onclick="loadAdminDashboard()" class="btn-admin" style="background-color: var(--bg-page);">⟳ Refresh Log</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Content ID</th>
+              <th>Creator ID</th>
+              <th>Human Score</th>
+              <th>Classification</th>
+              <th>Appeals Reason</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="audit-table-body">
+            <tr>
+              <td colspan="8" style="text-align: center; color: var(--text-muted);">No records found. Click Verify Content to log entries.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast Notification Area -->
+  <div class="toast-container" id="toast-area"></div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2026 Provenance Guard Attribution Protocol &bull; Clean Ceramic & Terracotta Nude Theme</p>
+  </footer>
+
+  <script>
+    // Tab switching state
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-tab-btn').forEach(el => el.classList.remove('active'));
+
+      document.getElementById('tab-' + tabId).classList.add('active');
+      document.getElementById('tab-' + tabId + '-btn').classList.add('active');
+
+      if (tabId === 'admin') {
+        loadAdminDashboard();
+      }
+    }
+
+    // Text editors character & word counter
+    function updateCounters() {
+      const text = document.getElementById('content-text').value;
+      const charCount = text.length;
+      
+      const cleanText = text.trim();
+      const wordCount = cleanText === "" ? 0 : cleanText.split(/\s+/).length;
+
+      document.getElementById('char-counter').innerText = `${charCount} character${charCount !== 1 ? 's' : ''}`;
+      document.getElementById('word-counter').innerText = `${wordCount} word${wordCount !== 1 ? 's' : ''}`;
+    }
+
+    // Displays micro-toasts in the bottom right corner
+    function showToast(message, type = 'success') {
+      const toastArea = document.getElementById('toast-area');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      
+      toast.innerHTML = `
+        <span>${message}</span>
+        <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
+      `;
+
+      toastArea.appendChild(toast);
+      
+      // Auto dismiss
+      setTimeout(() => {
+        toast.remove();
+      }, 5000);
+    }
+
+    // POST Content Submission Handler
+    async function submitText(event) {
+      event.preventDefault();
+      
+      const creatorId = document.getElementById('creator-id').value.trim();
+      const text = document.getElementById('content-text').value.trim();
+      
+      if (!creatorId || !text) {
+        showToast('Please enter both Creator ID and content text.', 'error');
+        return;
+      }
+
+      // UI Loading States
+      const submitBtn = document.getElementById('submit-btn');
+      const btnText = document.getElementById('btn-text');
+      const spinner = document.getElementById('btn-spinner');
+
+      submitBtn.disabled = true;
+      btnText.style.display = 'none';
+      spinner.style.display = 'block';
+
+      try {
+        const response = await fetch('/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: text, creator_id: creatorId })
+        });
+
+        if (response.status === 429) {
+          showToast('Verification rate limit exceeded. Please wait a moment before trying again.', 'error');
+          return;
+        }
+
+        const data = await response.json();
+        
+        if (!response.ok) {
+          showToast(data.error || 'Failed to analyze text.', 'error');
+          return;
+        }
+
+        // Show Results Pane
+        document.getElementById('results-placeholder').style.display = 'none';
+        document.getElementById('results-active').style.display = 'flex';
+
+        // Render Verdict details
+        const banner = document.getElementById('verdict-banner');
+        const icon = document.getElementById('verdict-icon');
+        const title = document.getElementById('verdict-title');
+        const desc = document.getElementById('verdict-desc');
+
+        banner.className = 'verdict-banner';
+        
+        if (data.attribution === 'likely_human') {
+          banner.classList.add('human');
+          icon.innerText = '✓';
+          title.innerText = 'Verified Human Work';
+          desc.innerText = data.transparency_label;
+          document.getElementById('appeal-panel').style.display = 'none';
+        } else if (data.attribution === 'uncertain') {
+          banner.classList.add('uncertain');
+          icon.innerText = '⚠';
+          title.innerText = 'Origin Unverified';
+          desc.innerText = data.transparency_label;
+          
+          // Setup appeal parameters
+          document.getElementById('appeal-panel').style.display = 'block';
+          document.getElementById('appeal-content-id').value = data.content_id;
+          document.getElementById('appeal-reason').value = '';
+        } else {
+          banner.classList.add('ai');
+          icon.innerText = '✕';
+          title.innerText = 'Content Note';
+          desc.innerText = data.transparency_label;
+          
+          // Setup appeal parameters
+          document.getElementById('appeal-panel').style.display = 'block';
+          document.getElementById('appeal-content-id').value = data.content_id;
+          document.getElementById('appeal-reason').value = '';
+        }
+
+        // Animating the radial SVG gauges
+        const finalScore = data.confidence_score;
+        const finalHumanPct = Math.round(finalScore * 100);
+        const finalAiPct = Math.round((1 - finalScore) * 100);
+
+        // Circular stroke math
+        const circumference = 314.16; // 2 * pi * r (where r=50)
+        const humanOffset = circumference - (finalHumanPct / 100) * circumference;
+        const aiOffset = circumference - (finalAiPct / 100) * circumference;
+
+        document.getElementById('human-percentage').innerText = `${finalHumanPct}%`;
+        document.getElementById('human-fill').style.strokeDashoffset = humanOffset;
+
+        document.getElementById('ai-percentage').innerText = `${finalAiPct}%`;
+        document.getElementById('ai-fill').style.strokeDashoffset = aiOffset;
+
+        // Render diagnostics (Heuristics breakdown progress bars)
+        const signals = data.individual_signals;
+        updateSignalBar('vocab', signals.vocabulary_variety);
+        updateSignalBar('sentence', signals.sentence_variance);
+        updateSignalBar('fluidity', signals.structural_fluidity);
+        updateSignalBar('flaws', signals.linguistic_flaws);
+        updateSignalBar('participles', signals.trailing_participles);
+
+        showToast('Attribution verification completed.', 'success');
+
+      } catch (err) {
+        showToast('Network error: Could not reach the server.', 'error');
+        console.error(err);
+      } finally {
+        submitBtn.disabled = false;
+        btnText.style.display = 'inline';
+        spinner.style.display = 'none';
+      }
+    }
+
+    function updateSignalBar(idPrefix, val) {
+      const percentVal = Math.round(val * 100);
+      document.getElementById(`sig-${idPrefix}-val`).innerText = `${percentVal}%`;
+      document.getElementById(`sig-${idPrefix}-bar`).style.width = `${percentVal}%`;
+    }
+
+    // POST Appeal Handler
+    async function submitAppeal(event) {
+      event.preventDefault();
+      
+      const contentId = document.getElementById('appeal-content-id').value;
+      const reasoning = document.getElementById('appeal-reason').value.trim();
+
+      if (!contentId || !reasoning) {
+        showToast('Appeal content details missing.', 'error');
+        return;
+      }
+
+      const appealBtn = document.getElementById('appeal-btn');
+      appealBtn.disabled = true;
+
+      try {
+        const response = await fetch('/appeal', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content_id: contentId, creator_reasoning: reasoning })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          showToast('Appeal registered successfully. Status updated to Under Review.', 'success');
+          document.getElementById('appeal-panel').style.display = 'none';
+          
+          // Dynamically change local result banner to reflect appeal status
+          const desc = document.getElementById('verdict-desc');
+          desc.innerText = "Label Unverified: Our automated system could not confidently determine the origin of this text. If you are the creator, your attribution status will remain active while we look closer.";
+          
+          const banner = document.getElementById('verdict-banner');
+          banner.className = 'verdict-banner uncertain';
+          document.getElementById('verdict-icon').innerText = '⚠';
+          document.getElementById('verdict-title').innerText = 'Origin Unverified (Under Review)';
+        } else {
+          showToast(data.error || 'Failed to file appeal.', 'error');
+        }
+      } catch (err) {
+        showToast('Network error: Appeal could not be sent.', 'error');
+      } finally {
+        appealBtn.disabled = false;
+      }
+    }
+
+    // Fetch and Populate Admin Dashboard Metrics and Logs
+    async function loadAdminDashboard() {
+      try {
+        // 1. Fetch Analytics
+        const analyticsRes = await fetch('/analytics');
+        const analytics = await analyticsRes.json();
+        
+        if (analyticsRes.ok) {
+          document.getElementById('stat-total').innerText = analytics.total_submissions_processed;
+          document.getElementById('stat-ai-pct').innerText = `${analytics.detection_pattern_ratios.likely_ai_percentage}%`;
+          document.getElementById('stat-human-pct').innerText = `${analytics.detection_pattern_ratios.likely_human_percentage}%`;
+          document.getElementById('stat-uncertain-pct').innerText = `${analytics.detection_pattern_ratios.uncertain_percentage}%`;
+          document.getElementById('stat-appeal-rate').innerText = `${analytics.appeal_rate_percentage}%`;
+          document.getElementById('stat-avg-score').innerText = analytics.average_system_confidence_score.toFixed(2);
+        }
+
+        // 2. Fetch Log list
+        const logRes = await fetch('/log');
+        const logData = await logRes.json();
+
+        const tableBody = document.getElementById('audit-table-body');
+        tableBody.innerHTML = '';
+
+        if (!logRes.ok || !logData.entries || logData.entries.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted);">No records found. Run a check to add entries.</td></tr>`;
+          return;
+        }
+
+        // Display in reverse chronological order
+        const sortedEntries = [...logData.entries].reverse();
+
+        sortedEntries.forEach(entry => {
+          const row = document.createElement('tr');
+          if (entry.status === 'under_review') {
+            row.className = 'highlight-appeal';
+          }
+
+          const dateStr = new Date(entry.timestamp).toLocaleString();
+          const scorePercent = Math.round(entry.confidence * 100);
+
+          // Status Badge Class
+          const statusClass = entry.status || 'completed';
+
+          // Action column buttons setup
+          let actionButtons = '-';
+          if (entry.status === 'under_review') {
+            actionButtons = `
+              <div class="admin-actions">
+                <button class="btn-admin approve" onclick="resolveAppeal('${entry.content_id}', 'approve_human')">Approve</button>
+                <button class="btn-admin maintain" onclick="resolveAppeal('${entry.content_id}', 'maintain')">Maintain</button>
+              </div>
+            `;
+          }
+
+          // Format reasoning excerpt
+          const reasoning = entry.appeal_reasoning 
+            ? `<div class="reasoning-text">"${entry.appeal_reasoning}"</div>` 
+            : '<span style="color: var(--text-muted); font-size: 0.8rem;">No appeal filed</span>';
+
+          row.innerHTML = `
+            <td>${dateStr}</td>
+            <td style="font-family: monospace; font-size: 0.8rem;" title="${entry.content_id}">${entry.content_id.substring(0, 8)}...</td>
+            <td><strong>${entry.creator_id}</strong></td>
+            <td><strong>${scorePercent}%</strong></td>
+            <td><span style="font-weight:600;">${entry.attribution.replace('_', ' ')}</span></td>
+            <td>${reasoning}</td>
+            <td><span class="status-badge ${statusClass}">${statusClass.replace('_', ' ')}</span></td>
+            <td>${actionButtons}</td>
+          `;
+
+          tableBody.appendChild(row);
+        });
+
+      } catch (err) {
+        showToast('Error loading audit statistics.', 'error');
+        console.error(err);
+      }
+    }
+
+    // POST resolve appeal admin trigger
+    async function resolveAppeal(contentId, action) {
+      if (!confirm(`Are you sure you want to resolve this appeal with action: "${action === 'approve_human' ? 'Approve Human Origin' : 'Maintain System Verdict'}"?`)) {
+        return;
+      }
+
+      try {
+        const response = await fetch('/appeal/resolve', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content_id: contentId, action: action })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          showToast(`Appeal resolved: ${action === 'approve_human' ? 'Approved as Human Work' : 'Maintained System Label'}.`, 'success');
+          loadAdminDashboard();
+        } else {
+          showToast(data.error || 'Failed to resolve appeal.', 'error');
+        }
+      } catch (err) {
+        showToast('Error sending resolution payload.', 'error');
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -465,5 +465,22 @@
     "transparency_label": "Content Note: Automated detection systems indicate this text closely matches patterns found in machine-generated writing.",
     "status": "completed",
     "appeal_reasoning": null
+  },
+  {
+    "content_id": "47fb82e5-35b7-43f9-9199-72cba17a534e",
+    "creator_id": "test_creator_1782863193",
+    "timestamp": "2026-06-30T23:46:33.020920Z",
+    "attribution": "likely_human",
+    "confidence": 1.0,
+    "signals": {
+      "vocabulary_variety": 0.88,
+      "sentence_variance": 0.36,
+      "structural_fluidity": 0.0,
+      "linguistic_flaws": 0.4,
+      "trailing_participles": 1.0
+    },
+    "transparency_label": "Verified Human Work: This content exhibits natural stylistic variations and authentic human writing patterns.",
+    "status": "resolved_human",
+    "appeal_reasoning": "I wrote this text as part of an official academic dissertation."
   }
 ]

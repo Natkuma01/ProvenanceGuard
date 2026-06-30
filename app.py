@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import uuid
@@ -110,6 +110,10 @@ def write_logs(logs):
 # ENDPOINTS
 # ==============================================================================
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
 @app.route('/submit', methods=['POST'])
 @limiter.limit("5 per minute; 60 per hour") # Defensible production safety rate limit
 def submit_content():
@@ -206,6 +210,43 @@ def appeal_decision():
         "content_id": content_id,
         "status": "under_review",
         "message": "Your appeal has been received. Our team will review it shortly."
+    }), 200
+
+@app.route('/appeal/resolve', methods=['POST'])
+def resolve_appeal():
+    data = request.get_json() or {}
+    content_id = data.get("content_id", "").strip()
+    action = data.get("action", "").strip() # "approve_human" or "maintain"
+    
+    if not content_id or not action:
+        return jsonify({"error": "Missing content_id or action"}), 400
+        
+    logs = read_logs()
+    record_found = False
+    
+    for entry in logs:
+        if entry["content_id"] == content_id:
+            if action == "approve_human":
+                entry["status"] = "resolved_human"
+                entry["attribution"] = "likely_human"
+                entry["confidence"] = 1.0
+                entry["transparency_label"] = get_transparency_label(1.0)
+            elif action == "maintain":
+                entry["status"] = "resolved_maintained"
+                # Restore original transparency label based on original confidence
+                entry["transparency_label"] = get_transparency_label(entry["confidence"])
+            record_found = True
+            break
+            
+    if not record_found:
+        return jsonify({"error": f"Submission with ID {content_id} not found."}), 404
+        
+    write_logs(logs)
+    
+    return jsonify({
+        "content_id": content_id,
+        "status": "resolved",
+        "message": "Appeal resolved successfully."
     }), 200
 
 @app.route('/log', methods=['GET'])
