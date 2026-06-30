@@ -1,0 +1,27 @@
+flowchart TD
+    A([Client]) -->|POST /api/v1/submit · raw text| B[Rate Limiter Middleware]
+    B -->|raw text| C[Vocabulary Variety · Signal 1]
+    B -->|raw text| D[Sentence Length Variance · Signal 2]
+    B -->|raw text| E[Structural Fluidity · Signal 3]
+    B -->|raw text| F[Linguistic Flaws & Slang · Signal 4]
+
+    C -->|vocabulary_variety score| G[Confidence Scorer]
+    D -->|sentence_variance score| G
+    E -->|fluidity_density score| G
+    F -->|informality_score| G
+
+    G -->|combined score 0–1| H{Uncertainty Buffer}
+    H -->|score ≥ 0.65 · human or ai| I[UX Label Engine]
+    H -->|score 0.50–0.65 · uncertain| I
+
+    I -->|transparency_label text| J[Audit Logger]
+    J -->|writes record| K[(Audit DB)]
+    J -->|submission_id · score · classification · label · status| A
+
+    A2([Client]) -->|POST /api/v1/appeal · submission_id + reason| L[Rate Limiter Middleware]
+    L -->|submission_id + reason| M[Appeal Handler]
+    M -->|status: under_review + appeal_reason| N[Audit Logger]
+    N -->|updates existing record| K
+    N -->|submission_id · status: under_review · message| A2
+
+
