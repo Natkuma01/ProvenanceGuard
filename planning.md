@@ -50,10 +50,16 @@ The individual scores are combined using a weighted average. Because the false p
 * **Blind Spot:** A polished piece of edited human fiction might have all slang and typos removed, making it look more like AI text to this specific signal.
 * *Output:* A float value between `0.0` and `1.0`. Counts conversational slang ("gonna", "gotta") and simple typographical patterns. High presence drives the score straight to `1.0`.
 * *Weight:* 30% of the total confidence calculation.
+### Signal 5: Trailing Participle Modifiers (Superficial Analysis)
+* **What it measures:** The density of sentences that end with a comma followed by a present participle ("-ing" word) phrase (e.g., `", highlighting..."`, `", indicating..."`, `", making it..."`).
+* **Why it works:** AI models tend to construct long sentences that append superficial analysis or consequences at the end of sentences using trailing participle clauses. Humans write with more varied sentence endings (using prepositions, simple periods, or coordinate clauses).
+* **Blind Spot:** Some academic or formal human writing also uses trailing participle modifiers, which could result in a lower score (more AI-like) for that specific signal.
+* *Output:* A float value between `0.0` and `1.0`. Evaluates if sentences end with a comma followed by a present participle; high density of trailing participles drives the score closer to `0.0`.
+* *Weight:* 15% of the total confidence calculation.
 
 
-**Scoring Equation Formula:**
-`Final Confidence Score = (Score1 * 0.25) + (Score2 * 0.25) + (Score3 * 0.20) + (Score4 * 0.30)`
+**Scoring Equation Formula (Ensemble Detection - 5 Signals):**
+`Final Confidence Score = (Score1 * 0.20) + (Score2 * 0.20) + (Score3 * 0.15) + (Score4 * 0.30) + (Score5 * 0.15)`
 
 ---
 
@@ -106,7 +112,7 @@ Our score limits protect human creators by establishing a broad uncertainty buff
 ## API Endpoints
 
 ### 1. Content Submission
-* **Endpoint:** `POST /api/v1/submit`
+* **Endpoint:** `POST /submit`
 * **Request Body:**
 ```json
 {
@@ -116,17 +122,25 @@ Our score limits protect human creators by establishing a broad uncertainty buff
 * **Response Body (200 OK):**
 ```
 {
-  "submission_id": "sub_102938475",
+  "content_id": "sub_102938475",
+  "creator_id": "user-123",
+  "attribution": "likely_human",
   "confidence_score": 0.88,
-  "classification": "human",
-  "transparency_label": "Verified Human Work: This content matches natural human writing patterns.",
+  "individual_signals": {
+    "vocabulary_variety": 0.85,
+    "sentence_variance": 0.91,
+    "structural_fluidity": 1.0,
+    "linguistic_flaws": 0.75,
+    "trailing_participles": 0.90
+  },
+  "transparency_label": "Verified Human Work: This content exhibits natural stylistic variations and authentic human writing patterns.",
   "status": "completed"
 }
 ```
 
 
 ### 2. Sunmit Appeal
-* **Endpoint:** `POST /api/v1/appeal`
+* **Endpoint:** `POST /appeal`
 * **Request Body:**
 ```json
 {
@@ -145,25 +159,48 @@ Our score limits protect human creators by establishing a broad uncertainty buff
 
 
 ### 3. View Audit Log
-* **Endpoint:** `GET /api/v1/log`
+* **Endpoint:** `GET /log`
 * **Request Body:** `None`
 * **Response Body (200 OK):**
 ```
 {
-  "logs": [
+  "entries": [
     {
-      "submission_id": "sub_102938475",
+      "content_id": "sub_102938475",
+      "creator_id": "user-123",
       "timestamp": "2026-06-29T20:12:17Z",
+      "attribution": "likely_human",
+      "confidence": 0.88,
       "signals": {
         "vocabulary_variety": 0.85,
-        "sentence_variance": 0.91
+        "sentence_variance": 0.91,
+        "structural_fluidity": 1.0,
+        "linguistic_flaws": 0.75,
+        "trailing_participles": 0.90
       },
-      "final_score": 0.88,
-      "classification": "human",
+      "transparency_label": "Verified Human Work: This content exhibits natural stylistic variations and authentic human writing patterns.",
       "status": "under_review",
-      "appeal_reason": "This text is an excerpt from my handwritten personal journal."
+      "appeal_reasoning": "This text is an excerpt from my handwritten personal journal."
     }
   ]
+}
+```
+
+
+### 4. View Analytics Dashboard
+* **Endpoint:** `GET /analytics`
+* **Request Body:** `None`
+* **Response Body (200 OK):**
+```
+{
+  "total_submissions_processed": 1,
+  "detection_pattern_ratios": {
+    "likely_ai_percentage": 0.0,
+    "likely_human_percentage": 100.0,
+    "uncertain_percentage": 0.0
+  },
+  "appeal_rate_percentage": 100.0,
+  "average_system_confidence_score": 0.88
 }
 ```
 

@@ -1,27 +1,25 @@
 flowchart TD
-    A([Client]) -->|POST /api/v1/submit · raw text| B[Rate Limiter Middleware]
-    B -->|raw text| C[Vocabulary Variety · Signal 1]
-    B -->|raw text| D[Sentence Length Variance · Signal 2]
-    B -->|raw text| E[Structural Fluidity · Signal 3]
-    B -->|raw text| F[Linguistic Flaws & Slang · Signal 4]
+    A([Client]) -->|POST /submit · text| B[Rate Limiter Middleware]
+    B -->|text| C[Vocabulary Variety · Signal 1]
+    B -->|text| D[Sentence Length Variance · Signal 2]
+    B -->|text| E[Structural Fluidity · Signal 3]
+    B -->|text| F[Linguistic Flaws & Slang · Signal 4]
 
     C -->|vocabulary_variety score| G[Confidence Scorer]
     D -->|sentence_variance score| G
-    E -->|fluidity_density score| G
-    F -->|informality_score| G
+    E -->|structural_fluidity score| G
+    F -->|linguistic_flaws score| G
 
     G -->|combined score 0–1| H{Uncertainty Buffer}
-    H -->|score ≥ 0.65 · human or ai| I[UX Label Engine]
-    H -->|score 0.50–0.65 · uncertain| I
+    H -->|score <= 0.55 or >= 0.76| I[UX Label Engine]
+    H -->|score 0.56–0.75 · uncertain| I
 
     I -->|transparency_label text| J[Audit Logger]
     J -->|writes record| K[(Audit DB)]
-    J -->|submission_id · score · classification · label · status| A
+    J -->|content_id · score · attribution · label · status| A
 
-    A2([Client]) -->|POST /api/v1/appeal · submission_id + reason| L[Rate Limiter Middleware]
-    L -->|submission_id + reason| M[Appeal Handler]
-    M -->|status: under_review + appeal_reason| N[Audit Logger]
+    A2([Client]) -->|POST /appeal · content_id + creator_reasoning| L[Rate Limiter Middleware]
+    L -->|content_id + creator_reasoning| M[Appeal Handler]
+    M -->|status: under_review + appeal_reasoning| N[Audit Logger]
     N -->|updates existing record| K
-    N -->|submission_id · status: under_review · message| A2
-
-
+    N -->|content_id · status: under_review · message| A2

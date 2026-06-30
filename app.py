@@ -65,6 +65,30 @@ def calculate_linguistic_flaws(text):
     if match_count == 1: return 0.75
     return 0.40
 
+def calculate_trailing_participles(text):
+    sentences = re.split(r'[.!?]+', text)
+    sentences = [s.strip() for s in sentences if s.strip()]
+    if not sentences:
+        return 1.0
+        
+    participle_count = 0
+    non_participles = {"thing", "something", "anything", "nothing", "everything", "during", "morning", "evening", "ring", "spring", "king", "wing", "sing"}
+
+    for s in sentences:
+        if ',' in s:
+            parts = s.split(',')
+            last_part = parts[-1].strip().lower()
+            if last_part:
+                words = last_part.split()
+                if words:
+                    first_word = re.sub(r'[^\w]', '', words[0])
+                    if first_word.endswith('ing') and first_word not in non_participles and len(first_word) > 3:
+                        participle_count += 1
+                        
+    ratio = participle_count / len(sentences)
+    score = 1.0 - (ratio * 2.5)
+    return round(min(max(score, 0.0), 1.0), 2)
+
 # ==============================================================================
 # AUDIT LOG PERSISTENCE LOGIC
 # ==============================================================================
@@ -103,8 +127,9 @@ def submit_content():
     s2 = calculate_sentence_variance(text_content)
     s3 = calculate_structural_fluidity(text_content)
     s4 = calculate_linguistic_flaws(text_content)
+    s5 = calculate_trailing_participles(text_content)
     
-    final_score = round((s1 * 0.25) + (s2 * 0.25) + (s3 * 0.20) + (s4 * 0.30), 2)
+    final_score = round((s1 * 0.20) + (s2 * 0.20) + (s3 * 0.15) + (s4 * 0.30) + (s5 * 0.15), 2)
     
     if final_score <= 0.55:
         attribution = "likely_ai"
@@ -124,7 +149,8 @@ def submit_content():
             "vocabulary_variety": s1,
             "sentence_variance": s2,
             "structural_fluidity": s3,
-            "linguistic_flaws": s4
+            "linguistic_flaws": s4,
+            "trailing_participles": s5
         },
         "transparency_label": label_text,
         "status": "completed"
@@ -147,6 +173,8 @@ def submit_content():
     write_logs(logs)
     
     return jsonify(response_payload), 200
+
+
 
 @app.route('/appeal', methods=['POST'])
 def appeal_decision():
@@ -183,6 +211,70 @@ def appeal_decision():
 @app.route('/log', methods=['GET'])
 def get_audit_log():
     return jsonify({"entries": read_logs()}), 200
+
+
+@app.route('/analytics', methods=['GET'])
+def get_analytics():
+    """
+    STRETCH GOAL: Analytics Dashboard Endpoint
+    Computes real-time system metrics directly from the persistent logs file.
+    """
+    logs = read_logs()
+    total_submissions = len(logs)
+    
+    # Handle the empty state gracefully
+    if total_submissions == 0:
+        return jsonify({
+            "total_submissions_processed": 0,
+            "detection_pattern_ratios": {
+                "likely_ai_percentage": 0.0,
+                "likely_human_percentage": 0.0,
+                "uncertain_percentage": 0.0
+            },
+            "appeal_rate_percentage": 0.0,
+            "average_system_confidence_score": 0.0
+        }), 200
+
+    ai_count = 0
+    human_count = 0
+    uncertain_count = 0
+    appealed_count = 0
+    total_confidence = 0.0
+    
+    for entry in logs:
+        # 1. Count Verdict Patterns
+        attr = entry.get("attribution")
+        if attr == "likely_ai":
+            ai_count += 1
+        elif attr == "likely_human":
+            human_count += 1
+        elif attr == "uncertain":
+            uncertain_count += 1
+            
+        # 2. Count Appeals (entries that are under review or have an appeal reason)
+        if entry.get("status") == "under_review" or entry.get("appeal_reasoning") is not None:
+            appealed_count += 1
+            
+        # 3. Sum for Average Confidence
+        total_confidence += entry.get("confidence", 0.0)
+        
+    # Calculate percentages and round cleanly
+    verdict_ratios = {
+        "likely_ai_percentage": round((ai_count / total_submissions) * 100, 1),
+        "likely_human_percentage": round((human_count / total_submissions) * 100, 1),
+        "uncertain_percentage": round((uncertain_count / total_submissions) * 100, 1)
+    }
+    
+    # Appeal rate is calculated against total submissions
+    appeal_rate = round((appealed_count / total_submissions) * 100, 1)
+    avg_confidence = round(total_confidence / total_submissions, 2)
+    
+    return jsonify({
+        "total_submissions_processed": total_submissions,
+        "detection_pattern_ratios": verdict_ratios,
+        "appeal_rate_percentage": appeal_rate,
+        "average_system_confidence_score": avg_confidence
+    }), 200
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)

@@ -316,5 +316,154 @@
     "transparency_label": "Label Unverified: Our automated system could not confidently determine the origin of this text. If you are the creator, your attribution status will remain active while we look closer.",
     "status": "completed",
     "appeal_reasoning": null
+  },
+  {
+    "content_id": "b5464e17-27d3-40a8-a677-cfd69e4dcc47",
+    "creator_id": "user-1_Clearly_AI",
+    "timestamp": "2026-06-30T23:22:17.860788Z",
+    "attribution": "likely_ai",
+    "confidence": 0.43,
+    "signals": {
+      "vocabulary_variety": 0.88,
+      "sentence_variance": 0.36,
+      "structural_fluidity": 0.0,
+      "linguistic_flaws": 0.4
+    },
+    "transparency_label": "Content Note: Automated detection systems indicate this text closely matches patterns found in machine-generated writing.",
+    "status": "completed",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "9b3e4260-3e24-45d4-9fc4-1c834427c3e0",
+    "creator_id": "user-2_Clearly_Human",
+    "timestamp": "2026-06-30T23:22:17.865224Z",
+    "attribution": "likely_human",
+    "confidence": 0.83,
+    "signals": {
+      "vocabulary_variety": 0.87,
+      "sentence_variance": 0.45,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 1.0
+    },
+    "transparency_label": "Verified Human Work: This content exhibits natural stylistic variations and authentic human writing patterns.",
+    "status": "completed",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "8f80d6b9-ed6d-4957-88b7-d60f0bd3c563",
+    "creator_id": "user-3_Formal_Human_Borderline",
+    "timestamp": "2026-06-30T23:22:17.868534Z",
+    "attribution": "uncertain",
+    "confidence": 0.63,
+    "signals": {
+      "vocabulary_variety": 0.86,
+      "sentence_variance": 0.37,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 0.4
+    },
+    "transparency_label": "Label Unverified: Our automated system could not confidently determine the origin of this text. If you are the creator, your attribution status will remain active while we look closer.",
+    "status": "completed",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "cf79ef90-da64-44ec-ad4c-e66b3fceb6c3",
+    "creator_id": "user-4_Edited_AI_Borderline",
+    "timestamp": "2026-06-30T23:22:17.872492Z",
+    "attribution": "uncertain",
+    "confidence": 0.63,
+    "signals": {
+      "vocabulary_variety": 0.92,
+      "sentence_variance": 0.33,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 0.4
+    },
+    "transparency_label": "Label Unverified: Our automated system could not confidently determine the origin of this text. If you are the creator, your attribution status will remain active while we look closer.",
+    "status": "completed",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "891a95d3-cc31-4096-8928-fd67bb9a2e39",
+    "creator_id": "user-1_Clearly_AI",
+    "timestamp": "2026-06-30T23:29:55.362750Z",
+    "attribution": "likely_ai",
+    "confidence": 0.52,
+    "signals": {
+      "vocabulary_variety": 0.88,
+      "sentence_variance": 0.36,
+      "structural_fluidity": 0.0,
+      "linguistic_flaws": 0.4,
+      "trailing_participles": 1.0
+    },
+    "transparency_label": "Content Note: Automated detection systems indicate this text closely matches patterns found in machine-generated writing.",
+    "status": "completed",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "5f622c11-da89-446b-abf9-42170f3f7ffd",
+    "creator_id": "user-2_Clearly_Human",
+    "timestamp": "2026-06-30T23:29:55.367722Z",
+    "attribution": "likely_human",
+    "confidence": 0.86,
+    "signals": {
+      "vocabulary_variety": 0.87,
+      "sentence_variance": 0.45,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 1.0,
+      "trailing_participles": 1.0
+    },
+    "transparency_label": "Verified Human Work: This content exhibits natural stylistic variations and authentic human writing patterns.",
+    "status": "completed",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "068adb02-6603-4cf1-a8fe-8cbcc5ddad9d",
+    "creator_id": "user-3_Formal_Human_Borderline",
+    "timestamp": "2026-06-30T23:29:55.372053Z",
+    "attribution": "uncertain",
+    "confidence": 0.67,
+    "signals": {
+      "vocabulary_variety": 0.86,
+      "sentence_variance": 0.37,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 0.4,
+      "trailing_participles": 1.0
+    },
+    "transparency_label": "Label Unverified: Our automated system could not confidently determine the origin of this text. If you are the creator, your attribution status will remain active while we look closer.",
+    "status": "completed",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "c5ef4248-1532-4c82-b1a0-dbbce6d96cba",
+    "creator_id": "user-4_Edited_AI_Borderline",
+    "timestamp": "2026-06-30T23:29:55.376494Z",
+    "attribution": "uncertain",
+    "confidence": 0.67,
+    "signals": {
+      "vocabulary_variety": 0.92,
+      "sentence_variance": 0.33,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 0.4,
+      "trailing_participles": 1.0
+    },
+    "transparency_label": "Label Unverified: Our automated system could not confidently determine the origin of this text. If you are the creator, your attribution status will remain active while we look closer.",
+    "status": "completed",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "d523f030-bacc-4941-8ab0-e49e57b7e2d9",
+    "creator_id": "test-user-1",
+    "timestamp": "2026-06-30T23:29:58.450617Z",
+    "attribution": "likely_ai",
+    "confidence": 0.44,
+    "signals": {
+      "vocabulary_variety": 0.83,
+      "sentence_variance": 0.03,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 0.4,
+      "trailing_participles": 0.0
+    },
+    "transparency_label": "Content Note: Automated detection systems indicate this text closely matches patterns found in machine-generated writing.",
+    "status": "completed",
+    "appeal_reasoning": null
   }
 ]
