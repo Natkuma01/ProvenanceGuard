@@ -19,6 +19,7 @@ for name, text in tests.items():
     res_data = response.json()
     
     print(f"--- TEST CASE: {name} ---")
+    print("Content ID: ", res_data.get("content_id"))
     print("Computed Score:", res_data.get("confidence_score"))
     print("Assigned Category:", res_data.get("attribution"))
     print("Signals Raw:", json.dumps(res_data.get("individual_signals"), indent=2))

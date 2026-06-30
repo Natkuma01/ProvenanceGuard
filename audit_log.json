@@ -108,5 +108,213 @@
       "linguistic_flaws": 0.4
     },
     "status": "classified"
+  },
+  {
+    "content_id": "fd71c144-6821-4d24-bb1f-82cbb0da1b47",
+    "creator_id": "user-1_Clearly_AI",
+    "timestamp": "2026-06-30T22:18:24.130889Z",
+    "attribution": "likely_ai",
+    "confidence": 0.43,
+    "signals": {
+      "vocabulary_variety": 0.88,
+      "sentence_variance": 0.36,
+      "structural_fluidity": 0.0,
+      "linguistic_flaws": 0.4
+    },
+    "transparency_label": "Content Note: Automated detection systems indicate this text closely matches patterns found in machine-generated writing.",
+    "status": "completed",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "22e40f29-9345-4416-afa8-cacfd9d76411",
+    "creator_id": "user-2_Clearly_Human",
+    "timestamp": "2026-06-30T22:18:24.133475Z",
+    "attribution": "likely_human",
+    "confidence": 0.83,
+    "signals": {
+      "vocabulary_variety": 0.87,
+      "sentence_variance": 0.45,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 1.0
+    },
+    "transparency_label": "Verified Human Work: This content exhibits natural stylistic variations and authentic human writing patterns.",
+    "status": "completed",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "464dd2fe-c97a-46ed-9f0e-08cb265a2fbc",
+    "creator_id": "user-3_Formal_Human_Borderline",
+    "timestamp": "2026-06-30T22:18:24.135284Z",
+    "attribution": "uncertain",
+    "confidence": 0.63,
+    "signals": {
+      "vocabulary_variety": 0.86,
+      "sentence_variance": 0.37,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 0.4
+    },
+    "transparency_label": "Label Unverified: Our automated system could not confidently determine the origin of this text. If you are the creator, your attribution status will remain active while we look closer.",
+    "status": "completed",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "8fdc69c8-b512-4df0-aab5-f41752f2d240",
+    "creator_id": "user-4_Edited_AI_Borderline",
+    "timestamp": "2026-06-30T22:18:24.136905Z",
+    "attribution": "uncertain",
+    "confidence": 0.63,
+    "signals": {
+      "vocabulary_variety": 0.92,
+      "sentence_variance": 0.33,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 0.4
+    },
+    "transparency_label": "Label Unverified: Our automated system could not confidently determine the origin of this text. If you are the creator, your attribution status will remain active while we look closer.",
+    "status": "completed",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "bb259694-166a-4511-a619-389270e8a1e0",
+    "creator_id": "user-1_Clearly_AI",
+    "timestamp": "2026-06-30T22:22:45.728015Z",
+    "attribution": "likely_ai",
+    "confidence": 0.43,
+    "signals": {
+      "vocabulary_variety": 0.88,
+      "sentence_variance": 0.36,
+      "structural_fluidity": 0.0,
+      "linguistic_flaws": 0.4
+    },
+    "transparency_label": "Content Note: Automated detection systems indicate this text closely matches patterns found in machine-generated writing.",
+    "status": "completed",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "a9443258-5f82-40c0-869c-398b577dcd05",
+    "creator_id": "user-2_Clearly_Human",
+    "timestamp": "2026-06-30T22:22:45.733759Z",
+    "attribution": "likely_human",
+    "confidence": 0.83,
+    "signals": {
+      "vocabulary_variety": 0.87,
+      "sentence_variance": 0.45,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 1.0
+    },
+    "transparency_label": "Verified Human Work: This content exhibits natural stylistic variations and authentic human writing patterns.",
+    "status": "completed",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "1ebdcfa1-3df3-4b2a-8336-eda0945cfa63",
+    "creator_id": "user-3_Formal_Human_Borderline",
+    "timestamp": "2026-06-30T22:22:45.735504Z",
+    "attribution": "uncertain",
+    "confidence": 0.63,
+    "signals": {
+      "vocabulary_variety": 0.86,
+      "sentence_variance": 0.37,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 0.4
+    },
+    "transparency_label": "Label Unverified: Our automated system could not confidently determine the origin of this text. If you are the creator, your attribution status will remain active while we look closer.",
+    "status": "completed",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "954941c0-d29c-47f6-849e-467e02dc9e13",
+    "creator_id": "user-4_Edited_AI_Borderline",
+    "timestamp": "2026-06-30T22:22:45.737215Z",
+    "attribution": "uncertain",
+    "confidence": 0.63,
+    "signals": {
+      "vocabulary_variety": 0.92,
+      "sentence_variance": 0.33,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 0.4
+    },
+    "transparency_label": "Label Unverified: Our automated system could not confidently determine the origin of this text. If you are the creator, your attribution status will remain active while we look closer.",
+    "status": "under_review",
+    "appeal_reasoning": "I am a non-native English speaker and my style appears formal."
+  },
+  {
+    "content_id": "23e84bd7-c32f-464e-b6cd-4b1e9294dd53",
+    "creator_id": "bot",
+    "timestamp": "2026-06-30T22:25:52.671586Z",
+    "attribution": "uncertain",
+    "confidence": 0.69,
+    "signals": {
+      "vocabulary_variety": 1.0,
+      "sentence_variance": 0.5,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 0.4
+    },
+    "transparency_label": "Label Unverified: Our automated system could not confidently determine the origin of this text. If you are the creator, your attribution status will remain active while we look closer.",
+    "status": "completed",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "faffb0f3-b2f9-4ca7-a152-ffda2452d0d2",
+    "creator_id": "bot",
+    "timestamp": "2026-06-30T22:25:52.681166Z",
+    "attribution": "uncertain",
+    "confidence": 0.69,
+    "signals": {
+      "vocabulary_variety": 1.0,
+      "sentence_variance": 0.5,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 0.4
+    },
+    "transparency_label": "Label Unverified: Our automated system could not confidently determine the origin of this text. If you are the creator, your attribution status will remain active while we look closer.",
+    "status": "completed",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "ba6fa93b-a1b8-4da9-85c3-2e8f6e1522eb",
+    "creator_id": "bot",
+    "timestamp": "2026-06-30T22:25:52.690001Z",
+    "attribution": "uncertain",
+    "confidence": 0.69,
+    "signals": {
+      "vocabulary_variety": 1.0,
+      "sentence_variance": 0.5,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 0.4
+    },
+    "transparency_label": "Label Unverified: Our automated system could not confidently determine the origin of this text. If you are the creator, your attribution status will remain active while we look closer.",
+    "status": "completed",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "4d765634-0251-4655-9258-c90defe5b31d",
+    "creator_id": "bot",
+    "timestamp": "2026-06-30T22:25:52.699835Z",
+    "attribution": "uncertain",
+    "confidence": 0.69,
+    "signals": {
+      "vocabulary_variety": 1.0,
+      "sentence_variance": 0.5,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 0.4
+    },
+    "transparency_label": "Label Unverified: Our automated system could not confidently determine the origin of this text. If you are the creator, your attribution status will remain active while we look closer.",
+    "status": "completed",
+    "appeal_reasoning": null
+  },
+  {
+    "content_id": "9ddd8fb5-aed7-4046-b7f4-ffba19790774",
+    "creator_id": "bot",
+    "timestamp": "2026-06-30T22:25:52.709574Z",
+    "attribution": "uncertain",
+    "confidence": 0.69,
+    "signals": {
+      "vocabulary_variety": 1.0,
+      "sentence_variance": 0.5,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 0.4
+    },
+    "transparency_label": "Label Unverified: Our automated system could not confidently determine the origin of this text. If you are the creator, your attribution status will remain active while we look closer.",
+    "status": "completed",
+    "appeal_reasoning": null
   }
 ]
