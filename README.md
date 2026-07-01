@@ -35,30 +35,7 @@ Open [http://localhost:5001](http://localhost:5001) in your browser to interact 
 
 ![Dataflow Diagram](dataflow_diagram.png)
 
-```mermaid
-flowchart TD
-    %% USER/ADMIN INTERACTIONS
-    Client([Client / Creator / Admin])
 
-    %% API ENDPOINTS
-    Client -->|POST /submit| RateLimiter[Rate Limiter Middleware]
-    Client -->|POST /appeal| Appeal[Appeal Handler]
-    Client -->|POST /appeal/resolve| AdminResolve[Admin Resolution]
-    Client -->|GET /analytics| Analytics[Analytics Engine]
-
-    %% BACKEND LOGIC
-    RateLimiter -->|Approved text| Pipeline[Ensemble Pipeline: 5 Heuristic Signals]
-    Pipeline --> Scorer[Confidence Scorer & UX Label Engine]
-
-    %% PERSISTENT DATABASE AND LOGGING
-    Scorer -->|Writes Log / Returns Label| LogDB[(audit_log.json)]
-    Appeal -->|Status: under_review| LogDB
-    AdminResolve -->|Approve / Maintain| LogDB
-    Analytics -->|Reads metrics| LogDB
-
-    %% RETURN TO CLIENT
-    LogDB -->|JSON response / Stats| Client
-```
 
 ### Text Submission Flow
 When a user submits text to `POST /submit`:
