@@ -23,7 +23,7 @@ Open [http://localhost:5001](http://localhost:5001) in your browser to interact 
 ### Web Interface Preview
 
 <p align="center">
-  <img src="verify_content.png" alt="Text Analysis Editor" width="49%" />
+  <img src="Screenshot1.png" alt="Text Analysis Editor" width="49%" />
   <img src="admin_queue.png" alt="Admin Dashboard" width="49%" />
 </p>
 
