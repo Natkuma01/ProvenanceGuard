@@ -21,7 +21,11 @@ Open [http://localhost:5001](http://localhost:5001) in your browser to interact 
 ---
 
 ### Web Interface Preview
-![Provenance Guard Web UI Preview](ceramic_terracotta_ui_mockup.jpg)
+
+<p align="center">
+  <img src="verify_content.png" alt="Text Analysis Editor" width="49%" />
+  <img src="admin_queue.png" alt="Admin Dashboard" width="49%" />
+</p>
 
 ---
 

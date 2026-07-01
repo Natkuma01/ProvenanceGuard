@@ -482,5 +482,22 @@
     "transparency_label": "Verified Human Work: This content exhibits natural stylistic variations and authentic human writing patterns.",
     "status": "resolved_human",
     "appeal_reasoning": "I wrote this text as part of an official academic dissertation."
+  },
+  {
+    "content_id": "21425afc-5e1d-4b9e-9b95-01c6fae6008a",
+    "creator_id": "random",
+    "timestamp": "2026-07-01T02:31:58.601194Z",
+    "attribution": "uncertain",
+    "confidence": 0.68,
+    "signals": {
+      "vocabulary_variety": 0.8,
+      "sentence_variance": 0.5,
+      "structural_fluidity": 1.0,
+      "linguistic_flaws": 0.4,
+      "trailing_participles": 1.0
+    },
+    "transparency_label": "Label Unverified: Our automated system could not confidently determine the origin of this text. If you are the creator, your attribution status will remain active while we look closer.",
+    "status": "completed",
+    "appeal_reasoning": null
   }
 ]
