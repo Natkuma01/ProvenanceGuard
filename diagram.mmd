@@ -1,25 +1,22 @@
 flowchart TD
-    A([Client]) -->|POST /submit · text| B[Rate Limiter Middleware]
-    B -->|text| C[Vocabulary Variety · Signal 1]
-    B -->|text| D[Sentence Length Variance · Signal 2]
-    B -->|text| E[Structural Fluidity · Signal 3]
-    B -->|text| F[Linguistic Flaws & Slang · Signal 4]
+    %% USER/ADMIN INTERACTIONS
+    Client([Client / Creator / Admin])
 
-    C -->|vocabulary_variety score| G[Confidence Scorer]
-    D -->|sentence_variance score| G
-    E -->|structural_fluidity score| G
-    F -->|linguistic_flaws score| G
+    %% API ENDPOINTS
+    Client -->|POST /submit| RateLimiter[Rate Limiter Middleware]
+    Client -->|POST /appeal| Appeal[Appeal Handler]
+    Client -->|POST /appeal/resolve| AdminResolve[Admin Resolution]
+    Client -->|GET /analytics| Analytics[Analytics Engine]
 
-    G -->|combined score 0–1| H{Uncertainty Buffer}
-    H -->|score <= 0.55 or >= 0.76| I[UX Label Engine]
-    H -->|score 0.56–0.75 · uncertain| I
+    %% BACKEND LOGIC
+    RateLimiter -->|Approved text| Pipeline[Ensemble Pipeline: 5 Heuristic Signals]
+    Pipeline --> Scorer[Confidence Scorer & UX Label Engine]
 
-    I -->|transparency_label text| J[Audit Logger]
-    J -->|writes record| K[(Audit DB)]
-    J -->|content_id · score · attribution · label · status| A
+    %% PERSISTENT DATABASE AND LOGGING
+    Scorer -->|Writes Log / Returns Label| LogDB[(audit_log.json)]
+    Appeal -->|Status: under_review| LogDB
+    AdminResolve -->|Approve / Maintain| LogDB
+    Analytics -->|Reads metrics| LogDB
 
-    A2([Client]) -->|POST /appeal · content_id + creator_reasoning| L[Rate Limiter Middleware]
-    L -->|content_id + creator_reasoning| M[Appeal Handler]
-    M -->|status: under_review + appeal_reasoning| N[Audit Logger]
-    N -->|updates existing record| K
-    N -->|content_id · status: under_review · message| A2
+    %% RETURN TO CLIENT
+    LogDB -->|JSON response / Stats| Client

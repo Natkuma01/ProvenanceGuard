@@ -4,12 +4,38 @@ This document maps out the system architecture, core detection engine logic, and
 
 ---
 
-## Architecture Narrative
+## Architecture
 
+```mermaid
+flowchart TD
+    %% USER/ADMIN INTERACTIONS
+    Client([Client / Creator / Admin])
+
+    %% API ENDPOINTS
+    Client -->|POST /submit| RateLimiter[Rate Limiter Middleware]
+    Client -->|POST /appeal| Appeal[Appeal Handler]
+    Client -->|POST /appeal/resolve| AdminResolve[Admin Resolution]
+    Client -->|GET /analytics| Analytics[Analytics Engine]
+
+    %% BACKEND LOGIC
+    RateLimiter -->|Approved text| Pipeline[Ensemble Pipeline: 5 Heuristic Signals]
+    Pipeline --> Scorer[Confidence Scorer & UX Label Engine]
+
+    %% PERSISTENT DATABASE AND LOGGING
+    Scorer -->|Writes Log / Returns Label| LogDB[(audit_log.json)]
+    Appeal -->|Status: under_review| LogDB
+    AdminResolve -->|Approve / Maintain| LogDB
+    Analytics -->|Reads metrics| LogDB
+
+    %% RETURN TO CLIENT
+    LogDB -->|JSON response / Stats| Client
+```
+
+### Architecture Narrative
 When a user submits text for evaluation, the data travels through a single pipeline:
 
 1. **Rate Limiter Middleware:** The system checks how often the user or client has made requests. If the request volume is within safe bounds, the text passes forward. If not, it blocks the request immediately to prevent spam.
-2. **Multi-Signal Detection Pipeline:** The raw text enters the classification engine. The engine runs the text through two independent analysis modules (Vocabulary Variety and Sentence Length Variance). Each module produces an individual mathematical score.
+2. **Multi-Signal Detection Pipeline:** The raw text enters the classification engine. The engine runs the text through five independent analysis modules (Vocabulary Variety, Sentence Length Variance, Structural Fluidity, Linguistic Flaws, and Trailing Participles). Each module produces an individual mathematical score.
 3. **Confidence Scorer:** This module takes the individual scores and processes them into a single confidence rating between 0.0 and 1.0. The math intentionally favors human creators to avoid false accusations.
 4. **UX Label Engine:** The system converts the final numerical confidence rating into plain, empathetic English text. This step ensures non-technical users can easily understand the decision status.
 5. **Audit Logger:** The system creates a permanent record containing the submission ID, a snippet of the text, individual signal scores, the final classification, and the current status.
@@ -210,7 +236,7 @@ Our score limits protect human creators by establishing a broad uncertainty buff
 
 ### Milestone 3: API Framework & First Evaluation Heuristic
 * **Context Sections Provided:** `## Architecture Diagram & Flows` + `## Detection Signals (Signal 1 Details)`
-* **Generation Target Request:** A clean Python Flask/FastAPI application framework containing the `POST /api/v1/submit` endpoint and the companion python calculation logic for processing Vocabulary Variety token inputs.
+* **Generation Target Request:** A clean Python Flask/FastAPI application framework containing the `POST /submit` endpoint and the companion python calculation logic for processing Vocabulary Variety token inputs.
 * **Verification Strategy:** Execute manual requests targeting the submission endpoint using a 10-word repetitive block and a 100-word diverse essay block to verify the custom sub-score calculation shifts expected ratios.
 
 ### Milestone 4: Parallel Pipeline Expansion & Weighted Score Blending
