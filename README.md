@@ -29,23 +29,7 @@ Open [http://localhost:5001](http://localhost:5001) in your browser to interact 
 
 ---
 
-## Table of Contents
-1. [How it Works (System Architecture)](#1-how-it-works-system-architecture)
-2. [The Five Detection Signals](#2-the-five-detection-signals)
-3. [Calculating the Score (Confidence Scoring)](#3-calculating-the-score-confidence-scoring)
-4. [What the Labels Say (Transparency Labels)](#4-what-the-labels-say-transparency-labels)
-5. [How Appeals Work](#5-how-appeals-work)
-6. [Rate Limits and Why We Chose Them](#6-rate-limits-and-why-we-chose-them)
-7. [Log File Samples (Audit Log)](#7-log-file-samples-audit-log)
-8. [Known Limitations (When the System Fails)](#8-known-limitations-when-the-system-fails)
-9. [Spec Reflection (Plan vs. Execution)](#9-spec-reflection-plan-vs-execution)
-10. [AI Tools Used](#10-ai-tools-used)
-11. [Extra Features Built (Stretch Goals)](#11-extra-features-built-stretch-goals)
-12. [How to Run and Test the Demo](#12-how-to-run-and-test-the-demo)
-
----
-
-## 1. How it Works (System Architecture)
+## 1. How it Works 
 
 ### Dataflow Diagram
 
@@ -94,9 +78,9 @@ When a creator appeals a score using `POST /appeal`:
 
 ---
 
-## 2. The Five Detection Signals
+## 2. Five Detection Signals
 
-The system measures five style metrics to check if text looks human or machine-written:
+These metrics check if text looks human or machine-written:
 
 | Signal | What it Measures | Why it Works | What it Misses (Blind Spot) |
 | :--- | :--- | :--- | :--- |
@@ -120,7 +104,7 @@ $$\text{Final Score} = (\text{Word Variety} \times 0.20) + (\text{Sentence Lengt
 *   **0.76 or higher:** High-Confidence Human.
 
 ### Test Cases Used for Validation
-We tested the formula with real examples to make sure the scores vary correctly:
+Test the formula with real examples to make sure the scores vary correctly:
 1.  **AI Test Case (Final Score: 0.52)**
     *   *Text:* A formal block with words like *"furthermore"* and perfect grammar.
     *   *Result:* Labeled as AI.
@@ -135,7 +119,7 @@ We tested the formula with real examples to make sure the scores vary correctly:
 
 ## 4. What the Labels Say (Transparency Labels)
 
-These are the exact labels shown to readers. They use simple English and avoid technical terms:
+Labels shown to readers. They use simple English and avoid technical terms:
 
 *   **For High-Confidence AI ($\le 0.55$):**
     > `"Content Note: Automated detection systems indicate this text closely matches patterns found in machine-generated writing."`
@@ -149,23 +133,24 @@ These are the exact labels shown to readers. They use simple English and avoid t
 ## 5. How Appeals Work
 
 If a creator gets an AI or Uncertain label, they can appeal:
-1.  They submit an appeal reason via the UI or `POST /appeal`.
-2.  The system updates the status of that submission in `audit_log.json` to `under_review` and saves the reason.
-3.  The label shown to readers instantly changes to the **Uncertain Zone** label to protect the writer during the review.
+1.  Submit an appeal reason via the UI or `POST /appeal`.
+2.  System updates the status of that submission in `audit_log.json` to `under_review` and saves the reason.
+3.  Label shown to readers instantly changes to the **Uncertain Zone** label to protect the writer during the review.
 4.  Admins view appeals in the **Admin Queue** tab. Clicking **Approve** updates the status to `resolved_human` (setting the score to `1.0`). Clicking **Maintain** updates the status to `resolved_maintained` and restores the original score.
 
 ---
 
 ## 6. Rate Limits and Why We Chose Them
 
-*   **Rate Limit:** 5 requests per minute, 60 requests per hour per user.
-*   **Reasoning:** Human writers only post new chapters or essays a few times an hour. A limit of 5 requests per minute lets them edit and resubmit their work without getting blocked, while stopping automated bots from flooding the server with spam.
+*   **Rate Limit:** 5 requests/minute, 60 requests/hour/user.
+*   **Reasoning:** Human writers only post new chapters or essays a few times an hour. A limit of 5 requests/minute lets them edit and resubmit their work without getting blocked, while stopping automated bots from flooding the server with spam.
 
 ---
 
 ## 7. Log File Samples (Audit Log)
 
-The audit log is saved as a JSON list in `audit_log.json`. Here are three real entries, including a submitted and resolved appeal:
+The audit log is saved as a JSON list in `audit_log.json`. 
+The three real entries includes submitted and resolved appeal:
 
 ```json
 [
@@ -225,14 +210,14 @@ The audit log is saved as a JSON list in `audit_log.json`. Here are three real e
 
 ---
 
-## 8. Known Limitations (When the System Fails)
+## 8. Limitations (When the System Fails)
 
 *   **Repetitive Writing:** A human poem that repeats lines or uses uniform sentence lengths will score low on variety and variance, getting flagged falsely as AI.
 *   **Formal Essays:** A human-written essay that uses perfect grammar, formal transition words, and no slang will score low on slang metrics, getting flagged as AI or Uncertain.
 
 ---
 
-## 9. Spec Reflection (Plan vs. Execution)
+## 9. Spec Reflection 
 
 *   **How the Spec Helped:** Planning the exact score weights and labels beforehand helped us write the code without changing core numbers later. It kept the frontend UI and backend aligned.
 *   **Divergence:** During implementation, formal human essays were scoring too low (getting flagged as AI). To fix this, we added a fifth signal (sentence endings ending with "-ing" verbs) which balanced the score and reduced false flags.
@@ -250,30 +235,8 @@ The audit log is saved as a JSON list in `audit_log.json`. Here are three real e
 
 ---
 
-## 11. Extra Features Built (Stretch Goals)
+## 11. Stretch Goals
 
 1.  **Ensemble Detection:** We built five distinct signals (variety, sentence variance, formal transitions, slang, and endings) instead of the required two, and blend them with weights.
 2.  **Analytics Dashboard:** We built a real-time analytics system. The `/analytics` endpoint reads stats (verdict percentages, appeal rate, average score) directly from `audit_log.json` and renders them in the admin dashboard tab.
 
----
-
-## 12. How to Run and Test the Demo
-
-### Step 1: Install Dependencies
-Make sure you have installed the required libraries in your virtual environment:
-```bash
-pip install -r requirements.txt
-```
-
-### Step 2: Run the Flask Server
-Start the backend server:
-```bash
-python3 app.py
-```
-*(Open http://localhost:5001 in your browser)*
-
-### Step 3: Run the Test Scenario
-1.  **Test Human Text:** Paste a casual message in the editor with slang. Click **Analyze**. You will see a high human score and a green label.
-2.  **Test AI Text:** Paste formal text with transition words. Click **Analyze**. You will see a low human score, a red label, and the appeal form.
-3.  **File an Appeal:** Write a reason in the appeal form and click submit. The label will change to unverified.
-4.  **Resolve Appeal:** Switch to the **Admin Queue** tab. You will see updated statistics and your appeal in the log table. Click **Approve** to mark the text as human.
